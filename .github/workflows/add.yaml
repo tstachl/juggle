@@ -35,14 +35,13 @@ jobs:
       - uses: actions/checkout@v2
       - uses: cachix/install-nix-action@v12
       - env:
-          GH_TOKEN: ${{ github.token }}
-          GITHUB_REPO: "tstachl/seed_tstachl_tbdliquidation"
+          REPO: "tstachl/seed_tstachl_tbdliquidation"
           TMP_REPO: "/tmp/repo"
           SYM_INFO: "/symbol_info/seed_tstachl_tbdliquidation.json"
         run: |
           source "$(nix-build shell.nix)/env.bash"
 
-          gh repo clone $GITHUB_REPO $TMP_REPO
+          gh repo clone $REPO $TMP_REPO
 
           CDATE=$(TZ=UTC date +%Y%m%dT)
           CTIME=$(TZ=UTC date +%H:%M)

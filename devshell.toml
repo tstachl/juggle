@@ -114,6 +114,10 @@ elif [[ "$CTIME" > "15:00" ]] && [[ "$CTIME" < "21:00" ]]; then
   SUFFIX="NIGHT"
 fi
 
+echo "set identity ..."
+git config --global user.email "perfec_dharmendra@pilina.email"
+git config --global user.name "Thomas Stachl"
+
 echo "commit the data locally ..."
 git --git-dir="$TMP_REPO/.git/" --work-tree="$TMP_REPO/" commit -am "$CDATE:$CTIME - $SUFFIX"
 echo "pushing data to remote repo ..."

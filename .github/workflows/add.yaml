@@ -9,24 +9,24 @@ on:
         options:
         - BTC
         - ETH
-      # short_25:
-      #   required: true
-      #   type: number
-      # short_50:
-      #   required: true
-      #   type: number
-      # short_100:
-      #   required: true
-      #   type: number
-      # long_100:
-      #   required: true
-      #   type: number
-      # long_50:
-      #   required: true
-      #   type: number
-      # long_25:
-      #   required: true
-      #   type: number
+      short_25:
+        required: true
+        type: number
+      short_50:
+        required: true
+        type: number
+      short_100:
+        required: true
+        type: number
+      long_100:
+        required: true
+        type: number
+      long_50:
+        required: true
+        type: number
+      long_25:
+        required: true
+        type: number
 
 jobs:
   add_data:

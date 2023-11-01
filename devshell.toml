@@ -4,8 +4,8 @@ packages = [
 ]
 
 [[commands]]
-name = "checkout"
-help = "Checkout the Github Repo"
+name = "clone"
+help = "Clone the Github Repo"
 command = """\
 echo "checking out repository from Github ..."
 

@@ -29,7 +29,7 @@ on:
         type: number
 
 jobs:
-  add_data:
+  add:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -42,10 +42,10 @@ jobs:
         run: |
           source "$(nix-build shell.nix)/env.bash"
 
-          gh repo clone $REPO $TMP_REPO
-
           CDATE=$(TZ=UTC date +%Y%m%dT)
           CTIME=$(TZ=UTC date +%H:%M)
 
-          echo "add ${{ inputs.symbol }} ${CDATE} ${CTIME} ${{ inputs.short_25 }} ${{ inputs.short_50 }} ${{ inputs.short_100 }} ${{ inputs.long_100 }} ${{ inputs.long_50 }} ${{ inputs.long_25 }}"
+          clone $REPO $TMP_REPO
+          add ${{ inputs.symbol }} ${CDATE} ${CTIME} ${{ inputs.short_25 }} ${{ inputs.short_50 }} ${{ inputs.short_100 }} ${{ inputs.long_100 }} ${{ inputs.long_50 }} ${{ inputs.long_25 }}
+          commit $TMP_REPO $CDATE $CTIME
 

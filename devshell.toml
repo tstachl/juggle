@@ -43,12 +43,12 @@ elif [[ "$CTIME" > "15:00" ]] && [[ "$CTIME" < "21:00" ]]; then
   SUFFIX="NIGHT"
 fi
 
-add-row "${SYMBOL}_SHORT_25X_$SUFFIX" "$CDATE" "$SHORT_25"
-add-row "${SYMBOL}_SHORT_50X_$SUFFIX" "$CDATE" "$SHORT_50"
-add-row "${SYMBOL}_SHORT_100X_$SUFFIX" "$CDATE" "$SHORT_100"
-add-row "${SYMBOL}_LONG_25X_$SUFFIX" "$CDATE" "$LONG_25"
-add-row "${SYMBOL}_LONG_50X_$SUFFIX" "$CDATE" "$LONG_50"
-add-row "${SYMBOL}_LONG_100X_$SUFFIX" "$CDATE" "$LONG_100"
+[[ "$SHORT_25" != "" ]] && add-row "${SYMBOL}_SHORT_25X_$SUFFIX" "$CDATE" "$SHORT_25"
+[[ "$SHORT_50" != "" ]] && add-row "${SYMBOL}_SHORT_50X_$SUFFIX" "$CDATE" "$SHORT_50"
+[[ "$SHORT_100" != "" ]] && add-row "${SYMBOL}_SHORT_100X_$SUFFIX" "$CDATE" "$SHORT_100"
+[[ "$LONG_25" != "" ]] && add-row "${SYMBOL}_LONG_25X_$SUFFIX" "$CDATE" "$LONG_25"
+[[ "$LONG_50" != "" ]] && add-row "${SYMBOL}_LONG_50X_$SUFFIX" "$CDATE" "$LONG_50"
+[[ "$LONG_100" != "" ]] && add-row "${SYMBOL}_LONG_100X_$SUFFIX" "$CDATE" "$LONG_100"
 """
 
 [[commands]]

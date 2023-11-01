@@ -12,22 +12,16 @@ on:
       date:
       time:
       short_25:
-        required: true
         type: number
       short_50:
-        required: true
         type: number
       short_100:
-        required: true
         type: number
       long_100:
-        required: true
         type: number
       long_50:
-        required: true
         type: number
       long_25:
-        required: true
         type: number
 
 jobs:

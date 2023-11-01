@@ -36,9 +36,16 @@ jobs:
       - uses: cachix/install-nix-action@v12
       - env:
           GH_TOKEN: ${{ github.token }}
-          DATA: ${{ github.event.client_payload.data }}
+          GITHUB_REPO: "tstachl/seed_tstachl_tbdliquidation"
+          TMP_REPO: "/tmp/repo"
+          SYM_INFO: "/symbol_info/seed_tstachl_tbdliquidation.json"
         run: |
           source "$(nix-build shell.nix)/env.bash"
-          menu
-          #echo "add ${{ inputs.symbol }} ${CDATE} ${CTIME} ${{ inputs.short_25 }} ${{ inputs.short_50 }} ${{ inputs.short_100 }} ${{ inputs.long_100 }} ${{ inputs.long_50 }} ${{ inputs.long_25 }}"
+
+          gh repo clone $GITHUB_REPO $TMP_REPO
+
+          CDATE=$(TZ=UTC date +%Y%m%dT)
+          CTIME=$(TZ=UTC date +%H:%M)
+
+          echo "add ${{ inputs.symbol }} ${CDATE} ${CTIME} ${{ inputs.short_25 }} ${{ inputs.short_50 }} ${{ inputs.short_100 }} ${{ inputs.long_100 }} ${{ inputs.long_50 }} ${{ inputs.long_25 }}"
 

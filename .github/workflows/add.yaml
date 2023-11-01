@@ -1,0 +1,44 @@
+name: devshell
+on:
+  workflow_dispatch:
+    inputs:
+      symbol:
+        required: true
+        default: "BTC"
+        type: choice
+        options:
+        - BTC
+        - ETH
+      short_25:
+        required: true
+        type: number
+      short_50:
+        required: true
+        type: number
+      short_100:
+        required: true
+        type: number
+      long_100:
+        required: true
+        type: number
+      long_50:
+        required: true
+        type: number
+      long_25:
+        required: true
+        type: number
+
+jobs:
+  add_data:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: cachix/install-nix-action@v12
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          DATA: ${{ github.event.client_payload.data }}
+        run: |
+          source "$(nix-build shell.nix)"
+          menu
+          echo "add ${{ inputs.symbol }} ${CDATE} ${CTIME} ${{ inputs.short_25 }} ${{ inputs.short_50 }} ${{ inputs.short_100 }} ${{ inputs.long_100 }} ${{ inputs.long_50 }} ${{ inputs.long_25 }}"
+

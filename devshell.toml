@@ -1,0 +1,124 @@
+[devshell]
+packages = [
+  "gh", "git", "jq"
+]
+
+[[commands]]
+name = "pull-data"
+help = "Pulls Liquidation Data"
+command = """\
+echo "Pulling data ..."
+"""
+
+[[commands]]
+name = "checkout"
+help = "Checkout the Github Repo"
+command = """\
+echo "Checking out repository from Github ..."
+gh repo clone tstachl/liquidity_data /tmp/repo
+"""
+
+[[commands]]
+name = "add"
+help = "Adds multiple liquidity levels to files"
+command = """\
+# add BTC 20231101T 04:00 35353 35223 34980 34001 33960 33500
+# CTIME=$(TZ=UTC date +%H:%M)
+CTIME=$3
+SYMBOL=$1
+CDATE=$2
+SHORT_25=$4
+SHORT_50=$5
+SHORT_100=$6
+LONG_100=$7
+LONG_50=$8
+LONG_25=$9
+SUFFIX="NIGHT"
+
+if [[ "$CTIME" > "03:00" ]] && [[ "$CTIME" < "09:00" ]]; then
+  SUFFIX="MORNING"
+elif [[ "$CTIME" > "09:00" ]] && [[ "$CTIME" < "15:00" ]]; then
+  SUFFIX="NOON"
+elif [[ "$CTIME" > "15:00" ]] && [[ "$CTIME" < "21:00" ]]; then
+  SUFFIX="NIGHT"
+fi
+
+add-row "${SYMBOL}_SHORT_25X_$SUFFIX" "$CDATE" "$SHORT_25"
+add-row "${SYMBOL}_SHORT_50X_$SUFFIX" "$CDATE" "$SHORT_50"
+add-row "${SYMBOL}_SHORT_100X_$SUFFIX" "$CDATE" "$SHORT_100"
+add-row "${SYMBOL}_LONG_25X_$SUFFIX" "$CDATE" "$LONG_25"
+add-row "${SYMBOL}_LONG_50X_$SUFFIX" "$CDATE" "$LONG_50"
+add-row "${SYMBOL}_LONG_100X_$SUFFIX" "$CDATE" "$LONG_100"
+"""
+
+[[commands]]
+name = "add-row"
+help = "Adds Liquidation Data to CSV files"
+command = """\
+SYMBOL_INFO="${TMP_REPO}${SYM_INFO}"
+SYMBOL=$1
+SYMBOL_DATA="${TMP_REPO}/data/${SYMBOL}.csv"
+CDATE=$2
+PRICE=$3
+
+get_index () {
+  echo $(jq --arg s "$1" -c '.symbol | index($s)' "$SYMBOL_INFO")
+}
+
+get_pricescale () {
+  local scale=$(jq --argjson i "$1" -c '.pricescale[$i]' "$SYMBOL_INFO")
+  echo $(expr "${#scale}" - 1)
+}
+
+index=$(get_index "$SYMBOL")
+scale=$(get_pricescale "$index")
+price=$(printf "%.${scale}f\\n" $PRICE)
+
+if [[ "$index" == "null" ]]; then
+  echo "symbol '$SYMBOL' doesn't exist"
+  exit 1
+fi
+
+if [ ! -f "$SYMBOL_DATA" ]; then
+  echo "data file for '$SYMBOL' at '$SYMBOL_DATA' doesn't exist"
+  exit 1
+fi
+
+if [[ "$CDATE" == "$(cat $SYMBOL_DATA | tail -n 1 | cut -d ',' -f1,1)" ]]; then
+  echo "data file already contains a row for '$CDATE'"
+  echo "removing the row"
+  tail -n 1 "$SYMBOL_DATA" | wc -c | xargs -I {} truncate -s -{} "$SYMBOL_DATA"
+fi
+
+echo "adding new row to '$SYMBOL_DATA' with price '$price'"
+row=$(echo "$CDATE,$price,$price,$price,$price,0")
+echo "$row"
+echo "$row" >> "$SYMBOL_DATA"
+echo "done"
+"""
+
+[[commands]]
+name = "commit"
+help = "commits local data and pushes it to github"
+command = """\
+CDATE=$(TZ=UTC date +%Y%m%dT)
+CTIME=$(TZ=UTC date +%H:%M)
+SUFFIX="NIGHT"
+if [[ "$CTIME" > "03:00" ]] && [[ "$CTIME" < "09:00" ]]; then
+  SUFFIX="MORNING"
+elif [[ "$CTIME" > "09:00" ]] && [[ "$CTIME" < "15:00" ]]; then
+  SUFFIX="NOON"
+elif [[ "$CTIME" > "15:00" ]] && [[ "$CTIME" < "21:00" ]]; then
+  SUFFIX="NIGHT"
+fi
+
+echo "commit the data locally ..."
+git --git-dir=/tmp/repo/.git/ --work-tree=/tmp/repo/ commit -am "$CDATE:$CTIME - $SUFFIX"
+echo "pushing data to remote repo ..."
+git --git-dir=/tmp/repo/.git/ --work-tree=/tmp/repo/ push -u origin master
+"""
+
+[[commands]]
+name = "cleanup"
+help = "Deletes the local Github Repo"
+command = "rm -rf /tmp/repo"

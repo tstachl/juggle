@@ -101,9 +101,10 @@ echo "done"
 name = "commit"
 help = "commits local data and pushes it to github"
 command = """\
-TMP_REPO=$1
-CDATE=$2
-CTIME=$3
+REPO=$1
+TMP_REPO=$2
+CDATE=$3
+CTIME=$4
 
 SUFFIX="NIGHT"
 if [[ "$CTIME" > "03:00" ]] && [[ "$CTIME" < "09:00" ]]; then
@@ -121,5 +122,5 @@ git config --global user.name "Thomas Stachl"
 echo "commit the data locally ..."
 git --git-dir="$TMP_REPO/.git/" --work-tree="$TMP_REPO/" commit -am "$CDATE:$CTIME - $SUFFIX"
 echo "pushing data to remote repo ..."
-git --git-dir="$TMP_REPO/.git/" --work-tree="$TMP_REPO/" push origin master
+git --git-dir="$TMP_REPO/.git/" --work-tree="$TMP_REPO/" push "https://tstachl:${GH_TOKEN}@github.com/${REPO}.git"
 """

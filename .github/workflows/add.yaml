@@ -49,5 +49,5 @@ jobs:
 
           clone $REPO $TMP_REPO
           add "${{ inputs.symbol }}" "${CDATE}" "${CTIME}" "${{ inputs.short_25 }}" "${{ inputs.short_50 }}" "${{ inputs.short_100 }}" "${{ inputs.long_100 }}" "${{ inputs.long_50 }}" "${{ inputs.long_25 }}"
-          commit $TMP_REPO $CDATE $CTIME
+          commit $REPO $TMP_REPO $CDATE $CTIME
 
